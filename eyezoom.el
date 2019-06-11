@@ -2,17 +2,13 @@
 ;;
 ;; Filename: eyezoom.el
 ;; Description: Eyebrowse and Zoom integration.
-;; Author: William Bert
-;; Maintainer:
+;; Author: William Bert <william.bert+eyezoon@gmail.com>
 ;; Created: Sun Jun  2 15:06:35 2019 (-0700)
 ;; Version: 1.0.0
-;; Package-Requires: ((emacs "26.1") (dash "20190424.1804") (eyebrowse "20190322.933") (zoom "20190523.1300"))
-;; Last-Updated:
-;;           By:
-;;     Update #: 0
+;; Package-Requires: ((emacs "26.1") (dash "2.16.0") (eyebrowse "0.7.7") (zoom "0.2.2"))
 ;; URL: https://github.com/sandinmyjoints/eyezoom
 ;; Doc URL:
-;; Keywords: eyebrows, zoom, convenience
+;; Keywords: eyebrowse, zoom, convenience, window management
 ;; Compatibility:
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -35,8 +31,8 @@
 ;;   :config
 ;;   (setq eyezoom-tags-that-zoom '("sql" "rest")))
 ;;
-;; For all workspaes with tags other than "sql" and "rest", Zoom will be
-;; turned off.
+;; For workspaces with tags "sql" and "rest", Zoom will be activated; for all
+;; others, it will be turned off.
 ;;
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,9 +72,10 @@
   :type 'list
   :group 'eyezoom)
 
-(defun eyezoom/turn-off-zoom-mode (slot)
-  "This is zoom--off but without the final cleanup it
-    does. (Disable hooks and advice only.)"
+(defun eyezoom-turn-off-zoom-mode (_)
+  "This is `zoom--off' but without the final cleanup it does.
+\(Disable hooks and advice only.)
+Argument _ unused."
   ;; unregister the zoom handler
   (remove-function pre-redisplay-function #'zoom--handler)
   ;; enable mouse resizing
@@ -87,16 +84,17 @@
   (advice-remove #'mouse-drag-header-line #'ignore)
   (setq zoom-mode nil))
 
-(advice-add #'eyebrowse-switch-to-window-config :before #'eyezoom/turn-off-zoom-mode)
+(advice-add #'eyebrowse-switch-to-window-config :before #'eyezoom-turn-off-zoom-mode)
 
-(defun eyezoom/post-window-switch ()
+(defun eyezoom-post-window-switch ()
+  "Hook to run after eyebrowse window configuration switch."
   (let* ((current-slot (eyebrowse--get 'current-slot))
          (window-configs (eyebrowse--get 'window-configs))
          (current-tag (nth 2 (assoc current-slot window-configs))))
     (when (-contains? eyezoom-tags-that-zoom current-tag)
       (zoom-mode))))
 
-(add-hook 'eyebrowse-post-window-switch-hook #'eyezoom/post-window-switch)
+(add-hook 'eyebrowse-post-window-switch-hook #'eyezoom-post-window-switch)
 
 (provide 'eyezoom)
 
