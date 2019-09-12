@@ -53,7 +53,7 @@
 ;; General Public License for more details.
 ;;
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
+;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -64,8 +64,7 @@
 (require 'zoom)
 
 (defgroup eyezoom nil
-  "Eyebrowse and Zoom integration."
-  :group 'tools)
+  "Eyebrowse and Zoom integration.")
 
 (defcustom eyezoom-tags-that-zoom '()
   "Eyebrowse tags that use Zoom."
